@@ -16,6 +16,14 @@ def parse_iso8601(s: str):
     except Exception:
         return None
 
+def seconds_to_parts(total_seconds: int):
+    """Convert total seconds into days, hours, minutes, seconds."""
+    s = abs(total_seconds)
+    days, rem = divmod(s, 86400)
+    hours, rem = divmod(rem, 3600)
+    minutes, seconds = divmod(rem, 60)
+    return days, hours, minutes, seconds
+
 @app.get("/countdown")
 def countdown():
     date_str = request.args.get("date")
@@ -30,10 +38,7 @@ def countdown():
     delta = target - now
     total = int(delta.total_seconds())
 
-    s = abs(total)
-    days, rem = divmod(s, 86400)
-    hours, rem = divmod(rem, 3600)
-    minutes, seconds = divmod(rem, 60)
+    days, hours, minutes, seconds = seconds_to_parts(total)
 
     if total >= 0:
         status = "UPCOMING"
